@@ -21,7 +21,7 @@ public:
     ~RingModulatorAudioProcessorEditor() override;
 
 	// GUI setup
-	static const int N_SLIDERS_COUNT = 5;
+	static const int N_SLIDERS_COUNT = 4;
 	static const int SCALE = 70;
 	static const int LABEL_OFFSET = 25;
 	static const int SLIDER_WIDTH = 200;

@@ -58,3 +58,39 @@ void SinSquareOscillator::setShape(float shape)
 }
 
 //==============================================================================
+SinSquareInterpolateOscillator::SinSquareInterpolateOscillator()
+{
+}
+
+void SinSquareInterpolateOscillator::init(int sampleRate)
+{
+	m_sampleRate = sampleRate;
+}
+
+
+float SinSquareInterpolateOscillator::process()
+{
+	m_sampleIndex++;
+	m_sampleIndex %= m_periodLenghtSamples;
+
+	const float sin = sinf(m_frequencyCoeficient * (double)m_sampleIndex);
+	const float square = m_sampleIndex > m_periodLenghtSamplesHalf ? 1.0f : -1.0f;
+	
+	return m_shapeInverse * sin + m_shape * square;
+}
+
+void SinSquareInterpolateOscillator::setFrequency(float frequency)
+{
+	m_periodLenghtSamples = m_sampleRate / (int)(frequency);
+	m_periodLenghtSamplesHalf = m_periodLenghtSamples / 2;
+
+	// Frequency is rounded to period lenght in samples
+	const int frequencyRounded = m_sampleRate / m_periodLenghtSamples;
+	m_frequencyCoeficient = 2.0 * 3.141592 * (double)frequencyRounded / (double)m_sampleRate;
+}
+
+void SinSquareInterpolateOscillator::setShape(float shape)
+{
+	m_shape = powf(shape, 2);
+	m_shapeInverse = 1.0f - m_shape;
+}

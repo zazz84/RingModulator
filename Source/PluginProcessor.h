@@ -69,11 +69,10 @@ private:
 
 	std::atomic<float>* frequencyParameter = nullptr;
 	std::atomic<float>* shapeParameter = nullptr;
-	std::atomic<float>* depthParameter = nullptr;
 	std::atomic<float>* mixParameter = nullptr;
 	std::atomic<float>* volumeParameter = nullptr;
 
-	SinSquareOscillator m_sinSquareOscillator[2] = {};
+	SinSquareInterpolateOscillator m_sinSquareOscillator[2] = {};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RingModulatorAudioProcessor)
 };

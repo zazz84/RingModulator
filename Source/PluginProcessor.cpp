@@ -9,7 +9,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-const std::string RingModulatorAudioProcessor::paramsNames[] = { "Frequency", "Shape", "Depth", "Mix", "Volume" };
+const std::string RingModulatorAudioProcessor::paramsNames[] = { "Frequency", "Shape", "Mix", "Volume" };
 
 //==============================================================================
 RingModulatorAudioProcessor::RingModulatorAudioProcessor()
@@ -26,9 +26,8 @@ RingModulatorAudioProcessor::RingModulatorAudioProcessor()
 {
 	frequencyParameter = apvts.getRawParameterValue(paramsNames[0]);
 	shapeParameter     = apvts.getRawParameterValue(paramsNames[1]);
-	depthParameter     = apvts.getRawParameterValue(paramsNames[2]);
-	mixParameter       = apvts.getRawParameterValue(paramsNames[3]);
-	volumeParameter    = apvts.getRawParameterValue(paramsNames[4]);
+	mixParameter       = apvts.getRawParameterValue(paramsNames[2]);
+	volumeParameter    = apvts.getRawParameterValue(paramsNames[3]);
 }
 
 RingModulatorAudioProcessor::~RingModulatorAudioProcessor()
@@ -139,7 +138,6 @@ void RingModulatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer
 	// Get params
 	const float frequency = frequencyParameter->load();
 	const float shape = shapeParameter->load();
-	const float depth = depthParameter->load();
 	const float mix = mixParameter->load();
 	const float volume = juce::Decibels::decibelsToGain(volumeParameter->load());
 
@@ -161,7 +159,7 @@ void RingModulatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer
 			const float in = channelBuffer[sample];
 
 			const float carrier = sinSquareOscillator.process();
-			const float out = in * (1 - depth + depth * carrier);
+			const float out = in * carrier;
 
 			// Apply volume
 			channelBuffer[sample] = volume * (mix * out + mixInverse * in);
@@ -205,9 +203,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout RingModulatorAudioProcessor:
 
 	layout.add(std::make_unique<juce::AudioParameterFloat>(paramsNames[0], paramsNames[0], NormalisableRange<float>( 20.0f, 10000.0f, 0.05f, 0.3f), 440.0f));
 	layout.add(std::make_unique<juce::AudioParameterFloat>(paramsNames[1], paramsNames[1], NormalisableRange<float>(  0.0f,     1.0f, 0.01f, 1.0f),   1.0f));
-	layout.add(std::make_unique<juce::AudioParameterFloat>(paramsNames[2], paramsNames[2], NormalisableRange<float>(  0.0f,     1.0f, 0.05f, 1.0f),   0.5f));
-	layout.add(std::make_unique<juce::AudioParameterFloat>(paramsNames[3], paramsNames[3], NormalisableRange<float>(  0.0f,     1.0f, 0.05f, 1.0f),   1.0f));
-	layout.add(std::make_unique<juce::AudioParameterFloat>(paramsNames[4], paramsNames[4], NormalisableRange<float>(-12.0f,    12.0f,  0.1f, 1.0f),   0.0f));
+	layout.add(std::make_unique<juce::AudioParameterFloat>(paramsNames[2], paramsNames[2], NormalisableRange<float>(  0.0f,     1.0f, 0.05f, 1.0f),   1.0f));
+	layout.add(std::make_unique<juce::AudioParameterFloat>(paramsNames[3], paramsNames[3], NormalisableRange<float>(-12.0f,    12.0f,  0.1f, 1.0f),   0.0f));
 
 	return layout;
 }

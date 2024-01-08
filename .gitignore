@@ -188,3 +188,6 @@ JuceLibraryCode/JuceHeader.h
 JuceLibraryCode/JucePluginDefines.h
 JuceLibraryCode/ReadMe.txt
 RingModulator.filtergraph
+Builds/VisualStudio2017/.vs/RingModulator/v15/ipch/AutoPCH/1701fa759c737647/OSCILLATOR.ipch
+Builds/VisualStudio2017/.vs/RingModulator/v15/ipch/AutoPCH/75cb6401e2b53e09/PLUGINEDITOR.ipch
+Builds/VisualStudio2017/x64/Release/Shared Code/RingModu.76DEB7C5.tlog/CL.write.1.tlog
