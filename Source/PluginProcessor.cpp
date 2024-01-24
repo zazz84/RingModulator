@@ -101,6 +101,8 @@ void RingModulatorAudioProcessor::prepareToPlay(double sampleRate, int samplesPe
 {
 	m_sinSquareOscillator[0].init((int)(sampleRate));
 	m_sinSquareOscillator[1].init((int)(sampleRate));
+
+	m_frequencyLast = frequencyParameter->load();
 }
 
 void RingModulatorAudioProcessor::releaseResources()
@@ -145,19 +147,23 @@ void RingModulatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer
 	const float mixInverse = 1.0f - mix;
 	const int channels = getTotalNumOutputChannels();
 	const int samples = buffer.getNumSamples();
-
+	
 	for (int channel = 0; channel < channels; ++channel)
 	{
 		auto* channelBuffer = buffer.getWritePointer(channel);
 		auto& sinSquareOscillator = m_sinSquareOscillator[channel];
-		sinSquareOscillator.setFrequency(frequency);
 		sinSquareOscillator.setShape(shape);
+		const float frequencyStep = (frequency - m_frequencyLast) / (float)samples;
+
+		float frequencyCurrent = m_frequencyLast;
 
 		for (int sample = 0; sample < samples; ++sample)
 		{
 			// Get input
 			const float in = channelBuffer[sample];
 
+			frequencyCurrent += frequencyStep;
+			sinSquareOscillator.setFrequency(frequencyCurrent);
 			const float carrier = sinSquareOscillator.process();
 			const float out = in * carrier;
 
@@ -165,6 +171,8 @@ void RingModulatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer
 			channelBuffer[sample] = volume * (mix * out + mixInverse * in);
 		}
 	}
+
+	m_frequencyLast = frequency;
 }
 
 //==============================================================================

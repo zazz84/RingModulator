@@ -49,7 +49,7 @@ void SinSquareOscillator::setFrequency(float frequency)
 	m_periodLenghtSamples = m_sampleRate / (int)(frequency);
 	// Frequency is rounded to period lenght in samples
 	const int frequencyRounded = m_sampleRate / m_periodLenghtSamples;
-	m_frequencyCoeficient = 2.0 * 3.141592 * (double)frequencyRounded / (double)m_sampleRate;
+	m_frequencyCoeficient = 2.0 * 3.141592653589793238 * (double)frequencyRounded / (double)m_sampleRate;
 }
 
 void SinSquareOscillator::setShape(float shape)
@@ -93,4 +93,40 @@ void SinSquareInterpolateOscillator::setShape(float shape)
 {
 	m_shape = powf(shape, 2);
 	m_shapeInverse = 1.0f - m_shape;
+}
+
+//==============================================================================
+FastSinOscillator::FastSinOscillator()
+{
+}
+
+void FastSinOscillator::init(int sampleRate)
+{
+	m_sampleRate = sampleRate;
+}
+
+float FastSinOscillator::process()
+{
+	m_sampleIndex++;
+	m_sampleIndex %= m_periodLenghtSamples;
+
+	const float out = fastSin(m_sampleIndex);
+
+	return out;
+}
+
+void FastSinOscillator::setFrequency(float frequency)
+{
+	m_step = ((m_sampleRate / (int)(frequency)) >> 5);
+	m_periodLenghtSamples = m_step << 5;
+}
+
+float FastSinOscillator::fastSin(int value)
+{
+	const int index = value / m_step;;
+	const float time = ((float)value / m_step) - index;
+
+	const float out = m_values[index] + time * m_difference[index];
+
+	return out;
 }
